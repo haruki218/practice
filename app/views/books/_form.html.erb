@@ -8,32 +8,54 @@
     <%= f.text_area :body, class: 'form-control book_body' %>
   </div>
   
-  <% if book.id.nil? %>
-    <div class="form-group" id="star">
-      <%= f.label :star %>
-      <%= f.hidden_field :star, id: :review_star, class: 'form-control' %>
+  <div class="form-group">
+    <%= f.label :star %>
+    <%= f.hidden_field :star, id: :review_star, class: 'form-control' %>
+    <% if book.new_record? %>
       <div id="post_raty"></div>
-    </div>
-    <script>
-      $(document).on('turbolinks:load', function() {
-        let elem = document.querySelector('#post_raty');
-        if (elem == null) return;
-  
-        elem.innerHTML = ""
-        let opt = {  
-          starOn: "<%= asset_path('star-on.png') %>",
-          starOff: "<%= asset_path('star-off.png') %>",
-          starHalf: "<%= asset_path('star-half.png') %>",
-          scoreName: 'book[star]',
-        };
-        raty(elem, opt);
-      });
-    </script>
-  <% else %>
-    <div class="form-group">
-      <%= render "static_rate", book: book %>
-    </div>
-  <% end %>
+      <script>
+        $(document).on('turbolinks:load', function() {
+          let elem = document.querySelector('#post_raty');
+          if (elem == null) return;
+
+          elem.innerHTML = "";
+          let opt = {  
+            starOn: "<%= asset_path('star-on.png') %>",
+            starOff: "<%= asset_path('star-off.png') %>",
+            starHalf: "<%= asset_path('star-half.png') %>",
+            scoreName: 'book[star]',
+            half: true,
+            click: function(score) {
+              document.querySelector('#review_star').value = score;
+            }
+          };
+          raty(elem, opt);
+        });
+      </script>
+    <% else %>
+      <div id="edit_raty"></div>
+      <script>
+        $(document).on('turbolinks:load', function() {
+          let elem = document.querySelector('#edit_raty');
+          if (elem == null) return;
+
+          elem.innerHTML = "";
+          let opt = {  
+            starOn: "<%= asset_path('star-on.png') %>",
+            starOff: "<%= asset_path('star-off.png') %>",
+            starHalf: "<%= asset_path('star-half.png') %>",
+            score: <%= book.star %>,
+            half: true,
+            scoreName: 'book[star]',
+            click: function(score) {
+              document.querySelector('#review_star').value = score;
+            }
+          };
+          raty(elem, opt);
+        });
+      </script>
+    <% end %>
+  </div>
   
   <div class="form-group">
     <label>Category</label>
